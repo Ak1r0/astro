@@ -5,7 +5,11 @@ const Ticker = require("../DataCollector/Ticker");
 
 class Printer {
 
+    enabled = true;
+
     #persistantLog = [];
+
+    #tempLog = [];
 
     #data = {
         startedAt: '',
@@ -36,7 +40,7 @@ class Printer {
         //
         // EventEmitter.on(ConfigOptimizer.EVENT_CONFIG_UPDATED, (conf) => {
         //     setImmediate(() => {
-        //         this.#log('log', conf);
+        //         this.log('log', conf);
         //     });
         // })
 
@@ -54,7 +58,7 @@ class Printer {
             eventData.datas.decision = 'GREEN';
             this.#data.eventBuyTreshold = eventData;
             if(eventData.datas.isRealGreen) {
-                this.#log("log", eventData.datas);
+                this.log("log", eventData.datas);
             }
             this.print();
         });
@@ -64,14 +68,21 @@ class Printer {
      * @param {string} type
      * @param {any} msg
      */
-    #log(type, msg) {
+    log(type, msg) {
         this.#persistantLog.push({
             type: type,
             msg: msg
         })
     }
 
+    temp(type, msg) {
+        this.#tempLog = {type: type, msg: msg};
+    }
+
     print() {
+
+        if(!this.enabled) return;
+
         console.clear();
 
         console.log(
@@ -93,6 +104,9 @@ class Printer {
         console.log("---------- eventBuyTreshold ----------");
         console.table(this.#data.eventBuyTreshold.candles);
         console.table(this.#data.eventBuyTreshold.datas);
+
+        this.#tempLog.type === 'log' && console.log(this.#tempLog.msg);
+        this.#tempLog.type === 'table' && console.table(this.#tempLog.msg);
 
         this.#persistantLog.forEach((log)=> {
             log.type === 'log' && console.log(log.msg);
@@ -129,4 +143,6 @@ class Printer {
     }
 }
 
-module.exports = Printer;
+const printer = new Printer();
+
+module.exports = printer;

@@ -8,11 +8,17 @@ class ItemCollection {
     items = [];
 
     /**
+     * @type {number}
+     */
+    #sum = 0;
+
+    /**
      * @param {AbstractItem} item
      * @return ItemCollection
      */
     add(item) {
         this.items.push(item);
+        this.#sum += item.value;
         return this;
     }
 
@@ -22,6 +28,7 @@ class ItemCollection {
      */
     set(items = []) {
         this.items = items;
+        items.forEach((item) => this.#sum += item.value);
         return this;
     }
 
@@ -60,7 +67,7 @@ class ItemCollection {
     }
 
     get sum() {
-        return this.items.reduce((previousItem, currentItem) => previousItem.value + currentItem.value);
+        return this.#sum;
     }
 }
 

@@ -14,3 +14,5 @@ class AbstractStrategy {
         throw new TypeError('run() must be implemented');
     }
 }
+
+module.exports = AbstractStrategy;

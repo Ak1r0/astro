@@ -21,6 +21,9 @@ class Tick extends AbstractItem {
         this.direction = open < close ? Tick.UP_DIRECTION : Tick.DOWN_DIRECTION;
     }
 
+    /**
+     * @return {number}
+     */
     get value() {
         return this.close;
     }

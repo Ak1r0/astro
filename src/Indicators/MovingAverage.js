@@ -12,8 +12,6 @@
  */
 class MovingAverage {
 
-    static mmeRatio = 0.5;
-
     /**
      * Calcul de la moyenne mobile
      * @param {ItemCollection} items
@@ -36,7 +34,7 @@ class MovingAverage {
         let sum = 0;
         let cum = 1;
         for(let n = 0; n < items.count; n++){
-            sum += items.at[n].value * (n+1);
+            sum += items.at(n).value * (n+1);
             cum += n+1;
         }
 
@@ -47,6 +45,8 @@ class MovingAverage {
      * Calcul de la moyenne mobile exponentielle
      * https://www.ig.com/fr/strategies-de-trading/moyennes-mobiles---comment-les-calculer-et-les-utiliser-dans-vot-210929
      * https://www.journaldunet.fr/patrimoine/guide-des-finances-personnelles/1504253-moyenne-mobile-exponentielle-definition-et-calcul/
+     *
+     * todo a retravailler
      *
      * @param {ItemCollection} items
      *
