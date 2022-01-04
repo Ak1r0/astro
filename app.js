@@ -1,17 +1,26 @@
 
-const Printer = require('./src/Printer');
-const ConfigOptimizer = require('./src/ConfigOptimizer');
-const Trader = require("./src/Trader");
+// const ConfigOptimizer = require('./src/ConfigOptimizer');
+// const Trader = require("./src/Trader");
 const {config} = require("./Config");
+const BinanceProvider = require("./src/DataProviders/Trades/BinanceProvider");
+const Ticker = require("./src/DataCollector/Ticker");
+const Printer = require("./src/Services/Printer");
 
 config.trader.pair = config.global.pairs.binance_BTCEUR;
 config.trader.strategy = config.global.strategies.priceVariation;
 
-new Printer();
-const configOptimizer = new ConfigOptimizer();
-const trader = new Trader();
+const printer = new Printer();
+let tradesProvider = new BinanceProvider();
+let ticker = new Ticker(tradesProvider)
 
-trader.run();
+ticker.startCollectingData("BTCEUR", "1m");
+
+//
+
+// const configOptimizer = new ConfigOptimizer();
+// const trader = new Trader();
+
+//trader.run();
 //
 // eventEmitter.on(EVENT_MARKET_UPDATE, (candleStick) => {
 //     candleChart.addCandle(candleStick);

@@ -1,10 +1,7 @@
-const Trader = require("./Trader");
-const ConfigOptimizer = require("./ConfigOptimizer");
-const BitcoinMempool = require("./DataProviders/BitcoinMempool");
-const EventEmitter = require('./EventManager');
-const {config} = require("../Config");
-const BuyTreshold = require("./Indicators/BuyTreshold");
 const moment = require("moment");
+const {config} = require("../../Config");
+const EventEmitter = require('./EventManager');
+const Ticker = require("../DataCollector/Ticker");
 
 class Printer {
 
@@ -22,14 +19,27 @@ class Printer {
     }
 
     constructor() {
-        this.#addTraderEventListeners();
-        this.#addIndicatorsEventListeners();
 
-        EventEmitter.on(ConfigOptimizer.EVENT_CONFIG_UPDATED, (conf) => {
-            setImmediate(() => {
-                this.#log('log', conf);
-            });
-        })
+        EventEmitter.on(Ticker.EVENT_NEW_TICK,
+            /** @param {Tick} tick
+                @param {TickCollection} tickCollection **/
+            (tick, tickCollection) => {
+                this.#data.coundLoadedCandles = tickCollection.count;
+                this.#data.lastsLoadedCandles = tickCollection.getNLasts(3);
+                this.print();
+            }
+        );
+
+        //
+        // this.#addTraderEventListeners();
+        // this.#addIndicatorsEventListeners();
+        //
+        // EventEmitter.on(ConfigOptimizer.EVENT_CONFIG_UPDATED, (conf) => {
+        //     setImmediate(() => {
+        //         this.#log('log', conf);
+        //     });
+        // })
+
 
     }
 

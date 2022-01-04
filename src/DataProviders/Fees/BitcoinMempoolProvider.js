@@ -1,7 +1,7 @@
 const mempoolJS = require('@mempool/mempool.js');
 const EventEmitter = require('../TradeEventEmitter');
 
-class BitcoinMempool {
+class BitcoinMempoolProvider {
 
     static EVENT_FEES_RECOMMENDED = 'EVENT_FEES_RECOMMENDED';
 
@@ -14,10 +14,10 @@ class BitcoinMempool {
         let feesRecommended = await fees.getFeesRecommended();
         let selectedFee = feesRecommended.fastestFee;
 
-        EventEmitter.emit(BitcoinMempool.EVENT_FEES_RECOMMENDED, selectedFee);
+        EventEmitter.emit(BitcoinMempoolProvider.EVENT_FEES_RECOMMENDED, selectedFee);
 
         return selectedFee * 0.00000001; // satoshi to bitcoin
     }
 }
 
-module.exports = BitcoinMempool;
+module.exports = BitcoinMempoolProvider;

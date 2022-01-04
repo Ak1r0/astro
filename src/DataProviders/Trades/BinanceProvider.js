@@ -1,9 +1,6 @@
-const {config} = require("../../Config");
 const BinanceApi = require("node-binance-api");
 const Tick = require("../../DataCollector/Tick");
 const AbstractTradesProvider = require("./AbstractTradesProvider");
-const moment = require("moment");
-const {CandleStick} = require("../Data/Candles");
 
 class BinanceProvider extends AbstractTradesProvider {
 
@@ -40,7 +37,7 @@ class BinanceProvider extends AbstractTradesProvider {
             ticks.forEach((tick) => {
                 let [time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored] = tick;
                 newTickCallback(
-                    new CandleStick(low, high, open, close, volume, time)
+                    new Tick(low, high, open, close, volume, time)
                 );
             });
         }, {
@@ -67,4 +64,15 @@ class BinanceProvider extends AbstractTradesProvider {
         });
     }
 
+    test() {
+        this.#binanceApi.prices('BTCEUR', (error, ticker) => {
+            console.info("Price of BTC: ", ticker.BTCEUR);
+        });
+
+        this.#binanceApi.bookTickers('BTCEUR', (error, ticker) => {
+            console.info("bookTickers", ticker);
+        });
+    }
 }
+
+module.exports = BinanceProvider;

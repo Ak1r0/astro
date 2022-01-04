@@ -23,15 +23,17 @@ class Ticker {
     async startCollectingData(pair, interval)
     {
         if(this.tickCollection.isEmpty) {
-            await this.tradesProvider.loadHistory(pair, interval, /** @param {Tick} tick **/ (tick: Tick) => {
+            await this.tradesProvider.loadHistory(pair, interval, /** @param {Tick} tick **/ (tick) => {
                 this.tickCollection.add(tick);
                 eventManager.emit(Ticker.EVENT_NEW_TICK, tick, this.tickCollection);
             });
         }
 
-        this.tradesProvider.waitForTicks(pair, interval, /** @param {Tick} tick **/ (tick: Tick) => {
+        this.tradesProvider.waitForTicks(pair, interval, /** @param {Tick} tick **/ (tick) => {
             this.tickCollection.add(tick);
             eventManager.emit(Ticker.EVENT_NEW_TICK, tick, this.tickCollection);
         });
     }
 }
+
+module.exports = Ticker;
