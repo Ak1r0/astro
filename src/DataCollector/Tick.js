@@ -1,6 +1,7 @@
 const moment = require("moment");
+const AbstractItem = require("../Data/AbstractItem");
 
-class Tick {
+class Tick extends AbstractItem {
 
     static get UP_DIRECTION() {
         return 'UP';
@@ -11,17 +12,17 @@ class Tick {
     }
 
     constructor(low, high, open, close, volume, eventTime) {
+        super(eventTime);
         this.low = parseFloat(low);
         this.high = parseFloat(high);
         this.open = parseFloat(open);
         this.close = parseFloat(close);
         this.volume = parseFloat(volume);
-        this.moment = moment(eventTime);
         this.direction = open < close ? Tick.UP_DIRECTION : Tick.DOWN_DIRECTION;
     }
 
-    get moy() {
-        return (this.low + this.high) / 2;
+    get value() {
+        return this.close;
     }
 }
 

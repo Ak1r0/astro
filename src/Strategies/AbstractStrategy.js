@@ -1,6 +1,3 @@
-const EventEmitter = require("../Services/EventManager");
-const Ticker = require("../DataCollector/Ticker");
-
 class AbstractStrategy {
 
     config = {};
@@ -13,26 +10,7 @@ class AbstractStrategy {
         this.config = {...this.config, ...config};
     }
 
-    /**
-     */
     async run() {
-
-        EventEmitter.on(Ticker.EVENT_NEW_TICK,
-            /**
-             * @param {Tick} tick
-             * @param {TickCollection} tickCollection
-             **/
-            (tick, tickCollection) => {
-                this.#runOnNewTick(tick, tickCollection);
-            }
-        );
-    }
-
-    /**
-     * @param {Tick} tick
-     * @param {TickCollection} tickCollection
-     **/
-    #runOnNewTick(tick, tickCollection) {
-        
+        throw new TypeError('run() must be implemented');
     }
 }

@@ -11,7 +11,7 @@ class AbstractTradesProvider {
      * @param {CallableFunction} newTickCallback
      */
     async waitForTicks(pair, interval, newTickCallback) {
-
+        throw new TypeError('waitForTicks() must be implemented');
     }
 
     /**
@@ -20,7 +20,7 @@ class AbstractTradesProvider {
      * @param {CallableFunction} newTickCallback
      */
     async loadHistory(pair, interval, newTickCallback) {
-        
+        throw new TypeError('loadHistory() must be implemented');
     }
 }
 

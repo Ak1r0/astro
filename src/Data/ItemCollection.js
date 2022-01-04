@@ -2,13 +2,30 @@ const moment = require("moment");
 
 class ItemCollection {
 
+    /**
+     * @type {AbstractItem[]}
+     */
     items = [];
 
+    /**
+     * @param {AbstractItem} item
+     * @return ItemCollection
+     */
     add(item) {
         this.items.push(item);
+        return this;
     }
 
-    get all(){
+    /**
+     * @param {AbstractItem[]} items
+     * @return ItemCollection
+     */
+    set(items = []) {
+        this.items = items;
+        return this;
+    }
+
+    get toArray(){
         return this.items;
     }
 
@@ -20,8 +37,18 @@ class ItemCollection {
         return this.items[this.count-1];
     }
 
+    /**
+     * @param {number} n
+     * @return ItemCollection
+     */
     getNLasts(n) {
-        return this.items.slice(Math.max(this.count - n, 0))
+        return new ItemCollection().set(
+            this.items.slice(Math.max(this.count - n, 0))
+        );
+    }
+
+    at(n) {
+        return this.items[n];
     }
 
     get isEmpty() {
@@ -30,6 +57,10 @@ class ItemCollection {
 
     get count() {
         return this.items.length;
+    }
+
+    get sum() {
+        return this.items.reduce((previousItem, currentItem) => previousItem.value + currentItem.value);
     }
 }
 

@@ -25,7 +25,7 @@ class Printer {
                 @param {TickCollection} tickCollection **/
             (tick, tickCollection) => {
                 this.#data.coundLoadedCandles = tickCollection.count;
-                this.#data.lastsLoadedCandles = tickCollection.getNLasts(3);
+                this.#data.lastsLoadedCandles = tickCollection.getNLasts(3).toArray;
                 this.print();
             }
         );
