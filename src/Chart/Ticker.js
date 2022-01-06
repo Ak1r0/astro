@@ -9,9 +9,9 @@ class Ticker {
     static EVENT_HISTORY_TICK = 'EVENT_HISTORY_TICK';
 
     /**
-     * @type {AbstractTradesProvider}
+     * @type {AbstractChartProvider}
      */
-    tradesProvider;
+    chartProvider;
 
     /**
      * @type {Timeframe[]}
@@ -20,11 +20,11 @@ class Ticker {
 
     /**
      *
-     * @param {AbstractTradesProvider} tradesProvider
+     * @param {AbstractChartProvider} chartProvider
      * @param {TimeframeConfig[]} configs
      */
-    constructor(tradesProvider, configs) {
-        this.tradesProvider = tradesProvider;
+    constructor(chartProvider, configs) {
+        this.chartProvider = chartProvider;
         configs.forEach((config) => {
            this.timeframes.push(new Timeframe(config));
         });
@@ -40,7 +40,7 @@ class Ticker {
         for(let n = 0; n < this.timeframes.length; n++) {
             let timeframe = this.timeframes[n];
             if(timeframe.isEmpty) {
-                await this.tradesProvider.loadHistory(
+                await this.chartProvider.loadHistory(
                     timeframe,
                     () => eventManager.emit(Ticker.EVENT_HISTORY_TICK + '_' + timeframe.config.name, timeframe)
                 );
@@ -51,7 +51,7 @@ class Ticker {
 
         let timeframe = this.timeframes[0]; //todo
 
-        this.tradesProvider.waitForTicks(
+        this.chartProvider.waitForTicks(
             timeframe,
             () => eventManager.emit(Ticker.EVENT_TICK+'_'+timeframe.config.name, timeframe)
         );

@@ -1,7 +1,5 @@
 const Timeframe = require("../Chart/Timeframe");
-const AverageMobile = require("./MovingAverage");
 const printer = require("../Services/Printer");
-const MovingAverage = require("./MovingAverage");
 
 /**
  * Le Relative Strenght Index (RSI),
@@ -9,6 +7,7 @@ const MovingAverage = require("./MovingAverage");
  * est un des indicateurs techniques les plus utilisés par les traders et les investisseurs.
  *
  * @see https://www.botraiders.com/apprendre-bourse/analyser-la-bourse/analyse-technique/relative-strength-index
+ * @see https://stackoverflow.com/questions/22626238/calculate-rsirelative-strength-index-using-some-programming-language-js-c
  */
 class RSI {
 
@@ -22,57 +21,30 @@ class RSI {
         let B = 0;
         let Bn = 0;
 
-        for(let n = 0; n < timeframe.count; n++){
+        for(let n = 1; n < timeframe.count; n++){
             /** @var {Tick} **/
             let tick = timeframe.at(n);
+            /** @var {Tick} **/
+            let previousTick = timeframe.at(n-1);
 
-            if(tick.open < tick.close) {
-                H += tick.close - tick.open;
+            if(previousTick.close < tick.close) {
+                H += tick.close - previousTick.close;
                 Hn++;
             }
             else {
-                B += tick.open - tick.close;
+                B += previousTick.close - tick.close;
                 Bn++;
             }
         }
 
-        let Hx = H / Hn;
-        let Bx = B / Bn;
+        let Hx = H / timeframe.count;
+        let Bx = B / timeframe.count;
 
-        printer.temp('log', 'Hx', Hx);
-        printer.temp('log', 'Bx', Bx);
-        printer.temp('log', 'Hx - Bx', Hx - Bx);
+        // printer.temp('log', 'Hx', Hx);
+        // printer.temp('log', 'Bx', Bx);
+        // printer.temp('log', 'Hx - Bx', Hx - Bx);
 
-        return 100 * Hx / (Hx - Bx);
-    }
-
-    /**
-     * @param {Timeframe} timeframe
-     */
-    static calcul2(timeframe) {
-        let H = new Timeframe(timeframe.config);
-        let B = new Timeframe(timeframe.config);
-
-        for(let n = 0; n < timeframe.count; n++){
-            /** @var {Tick} **/
-            let tick = timeframe.at(n);
-
-            if(tick.open < tick.close) {
-                H.add(tick);
-            }
-            else {
-                B.add(tick)
-            }
-        }
-
-        let Hx = MovingAverage.arithmetic(H);
-        let Bx = MovingAverage.arithmetic(B);
-
-        printer.temp('log', '2 Hx', Hx);
-        printer.temp('log', '2 Bx', Bx);
-        printer.temp('log', '2 Hx - Bx', Hx - Bx);
-
-        return 100 * Hx / (Hx - Bx);
+        return 100 - (100 / (1 + Hx / Bx));
     }
 }
 

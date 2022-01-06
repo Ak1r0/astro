@@ -41,7 +41,7 @@ class MicroVariationStrategy extends AbstractStrategy {
              **/
             (timeframe) => {
                 if(timeframe.count <= this.config.minimumTicksForAnalyze) return;
-
+                
                 this.#calculIndicators(timeframe);
                 this.#makeDecision(timeframe);
 
@@ -54,7 +54,11 @@ class MicroVariationStrategy extends AbstractStrategy {
      * @param {Timeframe} timeframe
      **/
     #makeDecision(timeframe) {
-
+        let tick = timeframe.last;
+        let prevTIck = timeframe.at(0);
+        if(tick.value > this.median + prevTIck.close && this.RSI < 30){
+            printer.temp('log', 'BUY');
+        }
     }
 
     #calculIndicators(timeframe){
@@ -74,7 +78,6 @@ class MicroVariationStrategy extends AbstractStrategy {
         this.indicators.moy = this.deltaSum / this.deltas.length;
 
         this.indicators.RSI = RSI.calcul(timeframe.getNLasts(14));
-        this.indicators.RSI2 = RSI.calcul2(timeframe.getNLasts(14));
     }
 
     /**

@@ -15,11 +15,6 @@ class Printer {
         startedAt: '',
         historyLoadedAt: '',
         config: {},
-        coundLoadedCandles: 0,
-        lastsLoadedCandles: [],
-        eventBuyTresholdPC: {candles:{}, datas:{}},
-        eventBuyTreshold: {candles:{}, datas:{}},
-        eventBuyTresholdReal: {candles:{}, datas:{}},
     }
 
     strategies = {};

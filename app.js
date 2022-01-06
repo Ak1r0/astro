@@ -2,10 +2,9 @@
 // const ConfigOptimizer = require('./src/ConfigOptimizer');
 // const Trader = require("./src/Trader");
 const {config} = require("./Config");
-const BinanceProvider = require("./src/DataProviders/Trades/BinanceProvider");
+const BinanceProvider = require("./src/DataProviders/Charts/BinanceProvider");
 const Ticker = require("./src/Chart/Ticker");
 const MicroVariationStrategy = require("./src/Strategies/MicroVariationStrategy");
-const printer = require("./src/Services/Printer");
 
 config.trader.pair = config.global.pairs.binance_BTCEUR;
 config.trader.strategy = config.global.strategies.priceVariation;

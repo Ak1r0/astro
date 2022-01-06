@@ -6,6 +6,9 @@ const EventEmitter = require('./TradeEventEmitter')
 
 const {config} = require("../Config");
 
+/**
+ * todo
+ */
 class Trader {
 
     static EVENT_TRADER_STARTED = 'EVENT_TRADER_STARTED';

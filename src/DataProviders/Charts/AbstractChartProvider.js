@@ -1,4 +1,4 @@
-class AbstractTradesProvider {
+class AbstractChartProvider {
 
     static intervalsUnits = {
         // 1m,3m,5m,15m,30m,1h,2h,4h,6h,8h,12h,1d,3d,1w,1M
@@ -10,8 +10,8 @@ class AbstractTradesProvider {
     }
 
     constructor() {
-        if (this.constructor === AbstractTradesProvider) {
-            throw new TypeError('Abstract class "AbstractTradesProvider" cannot be instantiated directly');
+        if (this.constructor === AbstractChartProvider) {
+            throw new TypeError('Abstract class "AbstractChartProvider" cannot be instantiated directly');
         }
     }
 
@@ -43,11 +43,11 @@ class AbstractTradesProvider {
      * @return {string}
      */
     formatInterval(timeframeConfig) {
-        if (!AbstractTradesProvider.intervalsUnits[timeframeConfig.interval_unit]) {
+        if (!AbstractChartProvider.intervalsUnits[timeframeConfig.interval_unit]) {
             throw new TypeError(`Unit '${timeframeConfig.interval_unit}' is not configured in AbstractTradesProvider`);
         }
-        return timeframeConfig.interval.toString() + AbstractTradesProvider.intervalsUnits[timeframeConfig.interval_unit];
+        return timeframeConfig.interval.toString() + AbstractChartProvider.intervalsUnits[timeframeConfig.interval_unit];
     }
 }
 
-module.exports = AbstractTradesProvider;
+module.exports = AbstractChartProvider;

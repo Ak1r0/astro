@@ -1,6 +1,6 @@
 const BinanceApi = require("node-binance-api");
 const Tick = require("../../Chart/Tick");
-const AbstractTradesProvider = require("./AbstractTradesProvider");
+const AbstractTradesProvider = require("./AbstractChartProvider");
 
 class BinanceProvider extends AbstractTradesProvider {
 
