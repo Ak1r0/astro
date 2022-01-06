@@ -1,5 +1,7 @@
-const TickCollection = require("../Chart/Timeframe");
+const Timeframe = require("../Chart/Timeframe");
 const AverageMobile = require("./MovingAverage");
+const printer = require("../Services/Printer");
+const MovingAverage = require("./MovingAverage");
 
 /**
  * Le Relative Strenght Index (RSI),
@@ -11,23 +13,64 @@ const AverageMobile = require("./MovingAverage");
 class RSI {
 
     /**
-     * @param {TickCollection} ticks
+     * @param {Timeframe} timeframe
      */
-    static calcul(ticks) {
+    static calcul(timeframe) {
 
-        let H = new TickCollection();
-        let B = new TickCollection();
+        let H = 0;
+        let Hn = 0;
+        let B = 0;
+        let Bn = 0;
 
-        for(let n = 0; n < ticks.count; n++){
+        for(let n = 0; n < timeframe.count; n++){
             /** @var {Tick} **/
-            let tick = ticks.at(n);
+            let tick = timeframe.at(n);
 
-            if(tick.open < tick.close) H.add(tick)
-            else B.add(tick);
+            if(tick.open < tick.close) {
+                H += tick.close - tick.open;
+                Hn++;
+            }
+            else {
+                B += tick.open - tick.close;
+                Bn++;
+            }
         }
 
-        let Hx = AverageMobile.exponential(H);
-        let Bx = AverageMobile.exponential(B);
+        let Hx = H / Hn;
+        let Bx = B / Bn;
+
+        printer.temp('log', 'Hx', Hx);
+        printer.temp('log', 'Bx', Bx);
+        printer.temp('log', 'Hx - Bx', Hx - Bx);
+
+        return 100 * Hx / (Hx - Bx);
+    }
+
+    /**
+     * @param {Timeframe} timeframe
+     */
+    static calcul2(timeframe) {
+        let H = new Timeframe(timeframe.config);
+        let B = new Timeframe(timeframe.config);
+
+        for(let n = 0; n < timeframe.count; n++){
+            /** @var {Tick} **/
+            let tick = timeframe.at(n);
+
+            if(tick.open < tick.close) {
+                H.add(tick);
+            }
+            else {
+                B.add(tick)
+            }
+        }
+
+        let Hx = MovingAverage.arithmetic(H);
+        let Bx = MovingAverage.arithmetic(B);
+
+        printer.temp('log', '2 Hx', Hx);
+        printer.temp('log', '2 Bx', Bx);
+        printer.temp('log', '2 Hx - Bx', Hx - Bx);
 
         return 100 * Hx / (Hx - Bx);
     }
