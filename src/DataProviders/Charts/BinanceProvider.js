@@ -22,6 +22,13 @@ class BinanceProvider extends AbstractTradesProvider {
     }
 
     /**
+     * @return {number}
+     */
+    static getFee() {
+        return 0.1 / 100;
+    }
+
+    /**
      * @param {Timeframe} timeframe
      * @param {CallableFunction} onUpdateCallback
      */
@@ -86,13 +93,6 @@ class BinanceProvider extends AbstractTradesProvider {
                 onUpdateCallback();
             }
         );
-    }
-
-    /**
-     * @return {number}
-     */
-    getFee() {
-        return 0.1 / 100;
     }
 
     test() {

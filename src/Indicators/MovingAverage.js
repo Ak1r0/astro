@@ -7,6 +7,7 @@
  * en utilisant à chaque calcul un sous-ensemble d'éléments dans lequel un nouvel élément remplace le plus ancien
  * ou s'ajoute au sous-ensemble.
  *
+ * https://www.investopedia.com/terms/c/close.asp
  * @see https://www.botraiders.com/apprendre-bourse/analyser-la-bourse/analyse-technique/moyenne-mobile
  * @see https://fr.wikipedia.org/wiki/Moyenne_mobile
  */

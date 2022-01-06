@@ -1,12 +1,20 @@
 const mempoolJS = require('@mempool/mempool.js');
-const EventEmitter = require('../TradeEventEmitter');
 const AbstractFeeProvider = require('./AbstractFeeProvider');
 
 class BitcoinMempoolProvider extends AbstractFeeProvider {
 
     static EVENT_FEES_RECOMMENDED = 'EVENT_FEES_RECOMMENDED';
 
+    /**
+     * @type {number|null}
+     */
+    static fees = null;
+
     static async getFee() {
+
+        if(null !== this.fees){
+            return this.fees; //todo Add a deadline for this cache
+        }
 
         const { bitcoin: { fees } } = mempoolJS({
             hostname: 'mempool.space'
@@ -15,9 +23,8 @@ class BitcoinMempoolProvider extends AbstractFeeProvider {
         let feesRecommended = await fees.getFeesRecommended();
         let selectedFee = feesRecommended.fastestFee;
 
-        EventEmitter.emit(BitcoinMempoolProvider.EVENT_FEES_RECOMMENDED, selectedFee);
-
-        return selectedFee * 0.00000001; // satoshi to bitcoin
+        this.fees = selectedFee * 0.00000001; // satoshi to bitcoin
+        return this.fees;
     }
 }
 

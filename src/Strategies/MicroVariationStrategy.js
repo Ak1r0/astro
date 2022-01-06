@@ -5,11 +5,15 @@ const RSI = require("../Indicators/RSI");
 
 const EventEmitter = require("../Services/EventManager");
 const printer = require("../Services/Printer");
+const BitcoinMempoolProvider = require("../DataProviders/Fees/BitcoinMempoolProvider");
+const BinanceProvider = require("../DataProviders/Charts/BinanceProvider");
 
 class MicroVariationStrategy extends AbstractStrategy {
 
     config = {
         minimumTicksForAnalyze: 0,
+        maxHoldedPositions: 3,
+        buyQuantity: 20,
         timeframes: [
             new TimeframeConfig("BTC", "EUR", 1, "minutes"),
         ]
@@ -24,6 +28,17 @@ class MicroVariationStrategy extends AbstractStrategy {
         moy: null,
         median: null,
     };
+
+    calculs = {
+        priceForQuantity: null,
+        networkFees: null,
+        platformFees: null,
+        shouldSellAt: null,
+        treshold: null,
+        delta: null,
+        buyCounter: 0,
+
+    }
 
     volumes = {
         moy: null,
@@ -41,7 +56,7 @@ class MicroVariationStrategy extends AbstractStrategy {
              **/
             (timeframe) => {
                 if(timeframe.count <= this.config.minimumTicksForAnalyze) return;
-                
+
                 this.#calculIndicators(timeframe);
                 this.#makeDecision(timeframe);
 
@@ -50,20 +65,10 @@ class MicroVariationStrategy extends AbstractStrategy {
         );
     }
 
-    /**
-     * @param {Timeframe} timeframe
-     **/
-    #makeDecision(timeframe) {
+    #calculIndicators(timeframe) {
         let tick = timeframe.last;
-        let prevTIck = timeframe.at(0);
-        if(tick.value > this.median + prevTIck.close && this.RSI < 30){
-            printer.temp('log', 'BUY');
-        }
-    }
-
-    #calculIndicators(timeframe){
-        let lastTick = timeframe.last;
-        let delta = Math.abs(lastTick.close - lastTick.open);
+        let lastTick = timeframe.at(timeframe.count-2);
+        let delta = Math.abs(lastTick.close - tick.close);
         this.deltaSum += delta;
         this.deltas.push(delta);
         this.deltas.sort((a, b) => a - b);
@@ -83,12 +88,54 @@ class MicroVariationStrategy extends AbstractStrategy {
     /**
      * @param {Timeframe} timeframe
      **/
-    #log(timeframe)
-    {
+    #makeDecision(timeframe) {
+
+        BitcoinMempoolProvider.getFee().then((fees) => {
+            this.calculs.networkFees = fees;
+        }); //todo calcul fees async with a timer to not slow down calculs
+        if(null === this.calculs.networkFees){
+            return;
+        }
+
+
+        let platformFees = BinanceProvider.getFee();
+
+        /** @var {Tick} **/
+        let tick = timeframe.last;
+
+        this.calculs.low = tick.low;
+        this.calculs.high = tick.high;
+        this.calculs.close = tick.close;
+        this.calculs.treshold = tick.close - this.indicators.median;
+
+        if(tick.low < this.calculs.treshold){
+
+            this.calculs.priceForQuantity = 1/tick.low * this.config.buyQuantity;
+            let shouldSellAt = tick.low + this.calculs.networkFees;
+            this.calculs.platformFees = shouldSellAt * platformFees;
+            this.calculs.shouldSellAt = shouldSellAt + this.calculs.platformFees;
+            this.calculs.delta = tick.high - this.calculs.shouldSellAt
+
+            if(this.calculs.shouldSellAt <= tick.high) {
+                printer.temp('log', 'BUY');
+                this.calculs.buyCounter++;
+                return;
+            }
+            printer.temp('log', 'DONT BUY');
+            return;
+        }
+        printer.temp('log', 'LOW NOT LOW ENOUGH');
+    }
+
+    /**
+     * @param {Timeframe} timeframe
+     **/
+    #log(timeframe) {
         printer.strategies.MicroVariationStrategy = {
             config: {type:"table", data: this.config.timeframes},
             timeframe: {type:"table", data: timeframe.getNLasts(3).toArray},
             indicators: {type:"table", data: this.indicators},
+            calculs: {type:"table", data: this.calculs},
         }
 
         printer.print();
