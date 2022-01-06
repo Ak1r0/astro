@@ -1,7 +1,7 @@
 const moment = require("moment");
 const {config} = require("../../Config");
 const EventEmitter = require('./EventManager');
-const Ticker = require("../DataCollector/Ticker");
+const Ticker = require("../Chart/Ticker");
 
 class Printer {
 
@@ -24,7 +24,7 @@ class Printer {
 
     constructor() {
 
-        EventEmitter.on(Ticker.EVENT_NEW_TICK,
+        EventEmitter.on(Ticker.EVENT_TICK,
             /** @param {Tick} tick
                 @param {TickCollection} tickCollection **/
             (tick, tickCollection) => {
@@ -100,10 +100,6 @@ class Printer {
 
         console.log("Total candles "+this.#data.coundLoadedCandles);
         console.table(this.#data.lastsLoadedCandles);
-
-        console.log("---------- eventBuyTreshold ----------");
-        console.table(this.#data.eventBuyTreshold.candles);
-        console.table(this.#data.eventBuyTreshold.datas);
 
         this.#tempLog.type === 'log' && console.log(this.#tempLog.msg);
         this.#tempLog.type === 'table' && console.table(this.#tempLog.msg);

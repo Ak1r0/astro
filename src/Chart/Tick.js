@@ -1,5 +1,5 @@
 const moment = require("moment");
-const AbstractItem = require("../Data/AbstractItem");
+const AbstractItem = require("../Models/AbstractItem");
 
 class Tick extends AbstractItem {
 
@@ -11,8 +11,10 @@ class Tick extends AbstractItem {
         return 'DOWN';
     }
 
-    constructor(low, high, open, close, volume, eventTime) {
-        super(eventTime);
+    constructor(symbol, low, high, open, close, volume, eventTime) {
+        super();
+        this.symbol = symbol;
+        this.moment = moment(eventTime);
         this.low = parseFloat(low);
         this.high = parseFloat(high);
         this.open = parseFloat(open);

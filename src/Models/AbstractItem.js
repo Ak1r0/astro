@@ -2,12 +2,10 @@ const moment = require("moment");
 
 class AbstractItem {
 
-    constructor(eventTime) {
+    constructor() {
         if (this.constructor === AbstractItem) {
             throw new TypeError('Abstract class "AbstractItem" cannot be instantiated directly');
         }
-
-        this.moment = moment(eventTime);
     };
 
     /**

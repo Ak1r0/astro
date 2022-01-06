@@ -1,14 +1,17 @@
-const EventEmitter = require("../Services/EventManager");
-const Ticker = require("../DataCollector/Ticker");
+const Ticker = require("../Chart/Ticker");
 const AbstractStrategy = require("./AbstractStrategy");
+const TimeframeConfig = require("../Models/TimeframeConfig");
 
+const EventEmitter = require("../Services/EventManager");
 const printer = require("../Services/Printer");
 
 class MicroVariationStrategy extends AbstractStrategy {
 
     config = {
-        variationPeriod: 10, // minutes
         minimumTicksForAnalyze: 0,
+        timeframes: [
+            new TimeframeConfig("BTC", "EUR", 1, "minutes"),
+        ]
     };
 
     deltas = [];
@@ -32,27 +35,24 @@ class MicroVariationStrategy extends AbstractStrategy {
 
     async run() {
 
-        EventEmitter.on(Ticker.EVENT_NEW_TICK,
-            /**
-             * @param {Tick} tick
-             * @param {TickCollection} tickCollection
-             **/
-            (tick, tickCollection) => {
+            EventEmitter.on(Ticker.EVENT_TICK+'_'+this.config.timeframes[0].name,
+                /**
+                 * @param {Timeframe} timeframe
+                 **/
+                (timeframe) => {
+                    if(timeframe.count <= this.config.minimumTicksForAnalyze) return;
 
-                if(tickCollection.count <= this.config.minimumTicksForAnalyze) return;
-
-                this.#runOnNewTick(tick, tickCollection);
-            }
-        );
+                    this.#runOnNewTick(timeframe);
+                }
+            );
     }
 
     /**
-     * @param {Tick} tick
-     * @param {TickCollection} tickCollection
+     * @param {Timeframe} timeframe
      **/
-    #runOnNewTick(tick, tickCollection) {
-
-        let delta = Math.abs(tick.close - tick.open);
+    #runOnNewTick(timeframe) {
+        let lastTick = timeframe.last;
+        let delta = Math.abs(lastTick.close - lastTick.open);
         this.deltaSum += delta;
         this.deltas.push(delta);
         this.deltas.sort((a, b) => a - b);

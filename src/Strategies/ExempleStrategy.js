@@ -1,6 +1,6 @@
 const AbstractStrategy = require("./AbstractStrategy");
 const EventEmitter = require("../Services/EventManager");
-const Ticker = require("../DataCollector/Ticker");
+const Ticker = require("../Chart/Ticker");
 const MovingAverage = require("../Indicators/MovingAverage");
 const RSI = require("../Indicators/RSI");
 const MACD = require("../Indicators/MACD");
@@ -13,7 +13,9 @@ class ExempleStrategy extends AbstractStrategy {
 
     async run() {
 
-        EventEmitter.on(Ticker.EVENT_NEW_TICK,
+
+
+        EventEmitter.on(Ticker.EVENT_TICK,
             /**
              * @param {Tick} tick
              * @param {TickCollection} tickCollection

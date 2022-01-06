@@ -1,7 +1,7 @@
 const BuyTreshold = require("./Indicators/BuyTreshold");
 const BinanceConnector = require('./DataProviders/BinanceConnector');
 
-const {CandleStick, CandleChart} = require("./Data/Candles");
+const {CandleStick, CandleChart} = require("./Models/Candles");
 const EventEmitter = require('./TradeEventEmitter')
 
 const {config} = require("../Config");

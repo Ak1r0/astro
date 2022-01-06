@@ -3,20 +3,21 @@
 // const Trader = require("./src/Trader");
 const {config} = require("./Config");
 const BinanceProvider = require("./src/DataProviders/Trades/BinanceProvider");
-const Ticker = require("./src/DataCollector/Ticker");
+const Ticker = require("./src/Chart/Ticker");
 const MicroVariationStrategy = require("./src/Strategies/MicroVariationStrategy");
 const printer = require("./src/Services/Printer");
 
 config.trader.pair = config.global.pairs.binance_BTCEUR;
 config.trader.strategy = config.global.strategies.priceVariation;
 
+let microVariationStrat = new MicroVariationStrategy();
 let tradesProvider = new BinanceProvider();
-let ticker = new Ticker(tradesProvider)
+let ticker = new Ticker(tradesProvider, microVariationStrat.config.timeframes)
 
-// printer.enabled = false;
-ticker.startCollectingData("BTCEUR", "1m");
+//printer.enabled = false;
+ticker.live();
 
-microVariationStrat = new MicroVariationStrategy().run();
+microVariationStrat.run();
 
 //
 

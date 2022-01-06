@@ -1,7 +1,8 @@
 const mempoolJS = require('@mempool/mempool.js');
 const EventEmitter = require('../TradeEventEmitter');
+const AbstractFeeProvider = require('./AbstractFeeProvider');
 
-class BitcoinMempoolProvider {
+class BitcoinMempoolProvider extends AbstractFeeProvider {
 
     static EVENT_FEES_RECOMMENDED = 'EVENT_FEES_RECOMMENDED';
 

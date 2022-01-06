@@ -1,4 +1,4 @@
-const TickCollection = require("../DataCollector/TickCollection");
+const TickCollection = require("../Chart/Timeframe");
 const AverageMobile = require("./MovingAverage");
 
 /**
