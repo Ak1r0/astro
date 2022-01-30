@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  ts-node-docker:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: base
+    container_name: astro_server
+    expose:
+      - '8080'
+    ports:
+      - "49160:8080"
+    volumes:
+      - ./server/src:/usr/src/server/src
+      - ./server/data:/usr/src/server/data
+      - ./server/nodemon.json:/usr/src/server/nodemon.json
+      - ./server/package.json:/usr/src/server/package.json
+      - ./server/package-lock.json:/usr/src/server/package-lock.json
+    command: npm run dev
