@@ -2,7 +2,7 @@
 #  - https://nodejs.org/fr/docs/guides/nodejs-docker-webapp/
 #  - https://dev.to/dariansampare/setting-up-docker-typescript-node-hot-reloading-code-changes-in-a-running-container-2b2f
 
-FROM node:14 as base
+FROM node:17 as base
 
 # Create app directory
 WORKDIR /usr/src/server

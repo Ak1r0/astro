@@ -1,40 +1,49 @@
-import AbstractProvider, {FetchType} from "./AbstractProvider";
+import AbstractProvider from "./AbstractProvider";
 import * as dfd from "danfojs-node";
-import {Exchange, Params} from "ccxt";
 import * as path from "path";
-import * as fs from "fs";
+import {dataFrameLength} from "../helpers";
 
 export default class FileProvider extends AbstractProvider {
 
-    private sourceData: {[filename: string]: any} = {};
+    private sourceData: {[filename: string]: dfd.DataFrame} = {};
 
-    async fetch(pair: string, timeframe: string, fetchType: FetchType = 'fetchOHLCV', params?: Params): Promise<dfd.DataFrame> {
+    private index = 500;
+    private maxLength = 0;
 
-    }
-
-    async loadHistory(pair: string, timeframe: string): Promise<dfd.DataFrame> {
+    async fetch(pair: string, timeframe: string): Promise<dfd.DataFrame> {
 
         let fileName = pair.replace('/', '_') + '-' + timeframe + '.json';
 
         if(this.sourceData[fileName] === undefined) {
-            let filePath = /*path.resolve*/( `./data/${this.exchange.id}`);
-            let buffer = fs.readFileSync(filePath + '/' + fileName, 'utf8');
-            this.sourceData[fileName] = JSON.parse(buffer);
+            return this.loadFile(fileName);
         }
 
-        let data = this.sourceData[fileName].slice(0, 500);
-
-        if(0 === data.length){
+        if(++this.index >= this.maxLength){
             return Promise.reject('All data are read');
         }
 
-        let df = new dfd.DataFrame(
-            data,
-            {columns: ['timestamp', 'open', 'high', 'low', 'close', 'volume']}
-        );
-
-        this.sourceData[fileName].shift();
-
+        let df = this.sourceData[fileName].iloc({rows: [this.index]});
         return Promise.resolve(df);
+    }
+
+    async loadFile(fileName: string): Promise<dfd.DataFrame> {
+        let filePath = path.resolve( `./data/${this.exchange.id}/${fileName}`);
+        console.log('Loading data from file', filePath);
+
+        try {
+            let df = await dfd.readJSON(filePath) as dfd.DataFrame;
+            df.resetIndex({inplace:true});
+            df.rename({'0': 'timestamp', '1': 'open', '2': 'high', '3':'low', '4':'close', '5':'volume'}, {inplace:true});
+            this.maxLength = dataFrameLength(df);
+            this.sourceData[fileName] = df;
+
+            console.log(this.maxLength, 'data loaded from file');
+
+            return df.head(this.index);
+        }
+        catch (e) {
+            console.log(e);
+            return Promise.reject(e);
+        }
     }
 }

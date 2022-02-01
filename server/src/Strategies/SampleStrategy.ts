@@ -1,27 +1,40 @@
 import * as dfd from "danfojs-node"
-import {DataStore} from "../DataStore/Chart";
+import ChartManager, {ChartList} from "../DataStore/ChartManager";
+import Chart, {callBackInput} from "../DataStore/Chart";
+import {sma, rsi} from "technicalindicators";
 
 export default class SampleStrategy {
 
-    public dataframesConfigs: Map<string, DataStore.Config> | undefined;
+    private charts : ChartList = {};
 
-    makeCharts(chartFactory) {
+    constructor(private chartManager: ChartManager) {
+        let {name, chart} = chartManager.getChart({base: "BTC", quote:"USDT", interval: "1m", exchangeId: 'binance'});
+        this.charts[name] = chart;
 
+        chart.onUpdate(this.exec);
     }
 
-    subscribeToDataProvider(): Map<string, DataStore.Config> {
-         this.dataframesConfigs = new Map([
-            ["BTCUSDT_1m_binance", {base: "BTC", quote:"USDT", interval: "1m"}]
-         ]);
+    exec: callBackInput = (chart, lastDataframes) => {
+        // console.log(input.chart);
+        // console.log(input.lastDataframes);
 
-        return this.dataframesConfigs;
+        this.populateIndicators(chart, lastDataframes);
     }
 
-    populateIndicators() {
-        const tf = dfd.tensorflow //Tensorflow.js is exported from Danfojs
+    populateIndicators(chart: Chart, df: dfd.DataFrame) {
+        //console.log(df);
+        // let c = sma({period : 5, values : [1,2,3,4,5,6,7,8,9], reversedInput : true});
+        // console.log(c);
 
-        let tensor_arr = tf.tensor2d([[12, 34, 2.2, 2], [30, 30, 2.1, 7]])
-        let df = new dfd.DataFrame(tensor_arr, {columns: ["A", "B", "C", "D"]})
-        console.log(df)
+        let tail = chart.getData()
+            .tail(500);
+        // console.log(tail);
+
+        let closes = tail
+            .loc({columns:["close"]});
+        // console.log(closes);
+
+        let c = rsi({period : 14, values : [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]});
+        console.log(c);
     }
 }

@@ -8,7 +8,7 @@ docker-compose build
 Le serveur permet de communiquer avec un front et d'afficher des infos ou des graphs
 
 ## Dev
-With watch cmd for live changes
+With watch cmd for startUpdating changes
 ```
 make dev
 # or

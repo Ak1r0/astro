@@ -13,7 +13,12 @@ services:
     volumes:
       - ./server/src:/usr/src/server/src
       - ./server/data:/usr/src/server/data
+      - ./server/tests:/usr/src/server/tests
+      - ./server/build:/usr/src/server/build
+      - ./server/jest.config.ts:/usr/src/server/jest.config.ts
       - ./server/nodemon.json:/usr/src/server/nodemon.json
+      - ./server/tsconfig.json:/usr/src/server/tsconfig.json
+      - ./server/tslint.json:/usr/src/server/tslint.json
       - ./server/package.json:/usr/src/server/package.json
       - ./server/package-lock.json:/usr/src/server/package-lock.json
     command: npm run dev

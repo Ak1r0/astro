@@ -21,6 +21,7 @@
     "build": "tsc -p .",
     "dev": "nodemon src/server.ts",
     "bot": "tsc && node build/src/bot.js",
+    "backtest": "tsc && node build/src/backtest.js",
     "test": "jest"
   },
   "dependencies": {

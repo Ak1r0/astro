@@ -6,4 +6,7 @@ export type FetchType = 'fetchTicker' | 'fetchOrderBook' | 'fetchTrades' | 'fetc
 export default abstract class AbstractProvider {
     constructor(public exchange: Exchange) {}
     abstract fetch(symbol: string,  timeframe: string, fetchType?: FetchType, params?: Params): Promise<DataFrame>;
+    async sync(waitFor: number) {
+
+    }
 }
