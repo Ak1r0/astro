@@ -1,17 +1,18 @@
 import * as dfd from "danfojs-node"
-import ChartManager, {ChartList} from "../DataStore/ChartManager";
+import ProcessManager, {ChartList} from "../DataStore/ProcessManager";
 import Chart, {callBackInput} from "../DataStore/Chart";
-import {sma, rsi} from "technicalindicators";
+import {sma, rsi, RSI} from "technicalindicators";
 
 export default class SampleStrategy {
 
-    private charts : ChartList = {};
+    private indicators : {
+        rsi?: RSI
+    } = {}
 
-    constructor(private chartManager: ChartManager) {
-        let {name, chart} = chartManager.getChart({base: "BTC", quote:"USDT", interval: "1m", exchangeId: 'binance'});
-        this.charts[name] = chart;
+    defineCharts = (): Chart[] => {
+        let c1 = new Chart({base: "BTC", quote:"USDT", interval: "1m", exchangeId: 'binance'});
 
-        chart.onUpdate(this.exec);
+        return [c1];
     }
 
     exec: callBackInput = (chart, lastDataframes) => {
@@ -26,15 +27,22 @@ export default class SampleStrategy {
         // let c = sma({period : 5, values : [1,2,3,4,5,6,7,8,9], reversedInput : true});
         // console.log(c);
 
-        let tail = chart.getData()
-            .tail(500);
-        // console.log(tail);
+        // if(!this.indicators.rsi) {
+        //     let data = chart.getData()
+        //         .tail(500)
+        //         .column("close")
+        //         .values;
+        //     this.indicators.rsi = new RSI({period : 14, values : data});
+        //     return;
+        // }
 
-        let closes = tail
-            .loc({columns:["close"]});
-        // console.log(closes);
+        let data = df
+            .column("close")
+            .values;
 
-        let c = rsi({period : 14, values : [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]});
-        console.log(c);
+        console.log(data);
+
+        let nextRsi = this.indicators.rsi?.nextValue(data.pop() as number);
+        console.log(nextRsi);
     }
 }

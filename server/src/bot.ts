@@ -2,15 +2,15 @@
 
 import SampleStrategy from "./Strategies/SampleStrategy";
 import ProviderManager from "./DataProvider/ProviderManager";
-import ChartManager from "./DataStore/ChartManager";
+import ProcessManager from "./DataStore/ProcessManager";
 
 (async () => {
 
     const providerManager = new ProviderManager({sandBoxMode: true, backTestingMode: false});
-    const chartManager = new ChartManager(providerManager);
+    const chartManager = new ProcessManager(providerManager);
 
-    const strat = new SampleStrategy(chartManager);
+    const strat = new SampleStrategy();
 
     providerManager.getProvider('binance');
-    chartManager.startUpdating();
+    chartManager.run();
 })();
